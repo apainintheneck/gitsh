@@ -1,0 +1,13 @@
+name: gitsh
+version: 0.1.0
+
+authors:
+  - apainintheneck <apainintheneck@gmail.com>
+
+targets:
+  gitsh:
+    main: src/gitsh.cr
+
+crystal: '>= 1.11.1'
+
+license: MIT
