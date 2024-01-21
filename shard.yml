@@ -6,7 +6,7 @@ authors:
 
 targets:
   gitsh:
-    main: src/gitsh.cr
+    main: src/main.cr
 
 crystal: '>= 1.11.1'
 
