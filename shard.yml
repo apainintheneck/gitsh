@@ -4,6 +4,11 @@ version: 0.1.0
 authors:
   - apainintheneck <apainintheneck@gmail.com>
 
+dependencies:
+  linenoise:
+    github: apainintheneck/crystal-linenoise
+    version: ~> 0.1.0
+
 targets:
   gitsh:
     main: src/main.cr

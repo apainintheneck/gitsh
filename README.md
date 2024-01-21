@@ -1,6 +1,8 @@
 # gitsh
 
-TODO: Write a description here
+A simple shell wrapper for Git that provides completions, history and doesn't require you to prefix `git` to each command.
+
+Based on: https://gist.github.com/apainintheneck/ddc87043a645e87f2d9e02b69be155b6
 
 ## Installation
 
