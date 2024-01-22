@@ -16,7 +16,7 @@ puts <<-WELCOME
 WELCOME
 
 loop do
-  line = Linenoise.prompt("gitsh> ")
+  line = Linenoise.prompt("gitsh> ").try(&.strip)
   break if line.nil?
 
   args = Process.parse_arguments(line)
