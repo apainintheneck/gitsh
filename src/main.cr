@@ -1,4 +1,5 @@
 require "./git"
+require "./prompt"
 require "linenoise"
 require "process"
 
@@ -15,49 +16,8 @@ puts <<-WELCOME
 #############################################################
 WELCOME
 
-def build_prompt(branch : String? = nil, unstaged_changes : UInt32 = 0, staged_changes : UInt32 = 0) : String
-  String.build do |str|
-    str << "gitsh".colorize(:light_cyan).mode(:bold)
-    if branch
-      str << " (" << branch.colorize(:magenta).mode(:bold) << "|"
-
-      if unstaged_changes.zero? && staged_changes.zero?
-        str << "✔".colorize(:green).mode(:bold)
-      end
-
-      if staged_changes.positive?
-        Colorize.with.yellow.surround(str) do
-          str << "●" << staged_changes
-        end
-      end
-
-      if unstaged_changes.positive?
-        Colorize.with.blue.surround(str) do
-          str << "+" << unstaged_changes
-        end
-      end
-
-      str << ")"
-    end
-    str << "> "
-  end
-end
-
-DEFAULT_PROMPT = build_prompt
-
 loop do
-  if Git.repo?
-    changes = Git.uncommitted_changes
-    prompt_str = build_prompt(
-      branch: Git.current_branch,
-      unstaged_changes: changes[:unstaged_count],
-      staged_changes: changes[:staged_count],
-    )
-  else
-    prompt_str = DEFAULT_PROMPT
-  end
-
-  line = Linenoise.prompt(prompt_str).try(&.strip)
+  line = Linenoise.prompt(Prompt.string).try(&.strip)
   break if line.nil?
 
   args = Process.parse_arguments(line)
