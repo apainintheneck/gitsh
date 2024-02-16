@@ -54,7 +54,7 @@ module Git
     staged_count = 0_u32
     unstaged_count = 0_u32
 
-    buffer.to_s.lines.each do |line|
+    buffer.rewind.each_line do |line|
       staged_count += 1 if ('A'..'Z').covers?(line[0])
       unstaged_count += 1 if ('A'..'Z').covers?(line[1])
     end
