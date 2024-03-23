@@ -41,6 +41,30 @@ module Git
     branch
   end
 
+  # Get the counts of uncommitted changes for the shell prompt.
+  def self.uncommitted_changes : NamedTuple(staged_count: UInt32, unstaged_count: UInt32)
+    buffer = IO::Memory.new
+
+    Process.run(
+      command: executable_path,
+      args: %w[status --porcelain],
+      output: buffer,
+    )
+
+    staged_count = 0_u32
+    unstaged_count = 0_u32
+
+    buffer.rewind.each_line do |line|
+      staged_count += 1 if ('A'..'Z').covers?(line[0])
+      unstaged_count += 1 if ('A'..'Z').covers?(line[1])
+    end
+
+    {
+      staged_count: staged_count,
+      unstaged_count: unstaged_count,
+    }
+  end
+
   @@commands : Array(String) = begin
     buffer = IO::Memory.new(capacity: 2048)
 
@@ -67,8 +91,9 @@ module Git
     Process.run(
       command: executable_path,
       args: args,
-      output: STDOUT,
-      error: STDERR,
+      output: :inherit,
+      error: :inherit,
+      input: :inherit,
     )
   end
 end

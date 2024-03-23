@@ -1,4 +1,5 @@
 require "./git"
+require "./prompt"
 require "linenoise"
 require "process"
 
@@ -16,7 +17,7 @@ puts <<-WELCOME
 WELCOME
 
 loop do
-  line = Linenoise.prompt("gitsh> ").try(&.strip)
+  line = Linenoise.prompt(Prompt.string).try(&.strip)
   break if line.nil?
 
   args = Process.parse_arguments(line)
