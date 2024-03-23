@@ -14,10 +14,10 @@ module Prompt
     end
   end
 
-  @@default = ">"
+  @@default : String = build
 
   def self.default : String
-    @@default ||= build
+    @@default
   end
 
   def self.build(branch : String? = nil, unstaged_changes : UInt32 = 0, staged_changes : UInt32 = 0) : String
