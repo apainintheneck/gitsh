@@ -7,7 +7,7 @@ require "process"
 %w[AUTHOR COMMITTER].each do |role|
   ENV["GIT_#{role}_NAME"] = "gitsh tests"
   ENV["GIT_#{role}_EMAIL"] = "gitsh-tests@localhost"
-  ENV["GIT_#{role}_DATE"]  = "Sun Jan 22 19:59:13 2017 +0000"
+  ENV["GIT_#{role}_DATE"] = "Sun Jan 22 19:59:13 2017 +0000"
 end
 
 module Test
