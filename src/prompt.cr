@@ -1,6 +1,8 @@
 require "./git"
 
 module Prompt
+  @@default : String?
+
   def self.string : String
     if Git.repo?
       changes = Git.uncommitted_changes
@@ -10,17 +12,11 @@ module Prompt
         staged_changes: changes[:staged_count],
       )
     else
-      default
+      @@default ||= build
     end
   end
 
-  @@default : String = build
-
-  def self.default : String
-    @@default
-  end
-
-  def self.build(branch : String? = nil, unstaged_changes : UInt32 = 0, staged_changes : UInt32 = 0) : String
+  private def self.build(branch : String? = nil, unstaged_changes : UInt32 = 0, staged_changes : UInt32 = 0) : String
     String.build do |str|
       str << "gitsh".colorize(:light_cyan).mode(:bold)
       if branch

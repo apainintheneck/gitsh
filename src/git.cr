@@ -60,7 +60,7 @@ module Git
     end
 
     {
-      staged_count: staged_count,
+      staged_count:   staged_count,
       unstaged_count: unstaged_count,
     }
   end
