@@ -2,6 +2,14 @@ require "spec"
 require "file_utils"
 require "process"
 
+# Copied from `Library/Homebrew/dev-cmd/tests.rb`.
+# This prevents git repo set up errors.
+%w[AUTHOR COMMITTER].each do |role|
+  ENV["GIT_#{role}_NAME"] = "gitsh tests"
+  ENV["GIT_#{role}_EMAIL"] = "gitsh-tests@localhost"
+  ENV["GIT_#{role}_DATE"]  = "Sun Jan 22 19:59:13 2017 +0000"
+end
+
 module Test
   # Runs a system command without printing to stdout or stderr.
   def self.quiet_system(command)
@@ -38,6 +46,7 @@ module TestDir
   def self.with_git_repo(&block)
     in_temp_directory do
       Test.quiet_system("git init")
+      Test.quiet_system("git branch -m main")
       block.call
     end
   end
