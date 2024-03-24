@@ -38,7 +38,7 @@ describe Prompt do
             # Commit one file
             FileUtils.touch "file1"
             Test.quiet_system("git add file1")
-            Test.quiet_system("git commit -m 'first'")
+            system("git commit -m 'first'")
             # One unstaged file change
             File.write "file1", "text"
 
