@@ -46,7 +46,11 @@ module TestDir
   def self.with_git_repo(&block)
     in_temp_directory do
       Test.quiet_system("git init")
+      # Add a commit to be able to set the branch name.
+      FileUtils.touch ".keep"
+      Test.quiet_system("git add .keep && git commit -m 'init'")
       Test.quiet_system("git branch -m main")
+
       block.call
     end
   end

@@ -2,8 +2,7 @@ require "./spec_helper"
 require "../src/prompt.cr"
 
 GITSH    = "gitsh".colorize(:light_cyan).mode(:bold)
-HEAD     = "HEAD".colorize(:magenta).mode(:bold)
-MASTER   = "master".colorize(:magenta).mode(:bold)
+BRANCH   = "main".colorize(:magenta).mode(:bold)
 CHECK    = "✔".colorize(:green).mode(:bold)
 STAGED   = "●2".colorize(:yellow)
 UNSTAGED = "+1".colorize(:blue)
@@ -14,7 +13,7 @@ describe Prompt do
       context "with no changes" do
         it "returns expected prompt" do
           TestDir.with_git_repo do
-            Prompt.string.should eq "#{GITSH}(#{HEAD}|#{CHECK})> "
+            Prompt.string.should eq "#{GITSH}(#{BRANCH}|#{CHECK})> "
           end
         end
       end
@@ -27,7 +26,7 @@ describe Prompt do
             FileUtils.touch "file2"
             Test.quiet_system("git add file1 file2")
 
-            Prompt.string.should eq "#{GITSH}(#{HEAD}|#{STAGED})> "
+            Prompt.string.should eq "#{GITSH}(#{BRANCH}|#{STAGED})> "
           end
         end
       end
@@ -42,7 +41,7 @@ describe Prompt do
             # One unstaged file change
             File.write "file1", "text"
 
-            Prompt.string.should eq "#{GITSH}(#{MASTER}|#{UNSTAGED})> "
+            Prompt.string.should eq "#{GITSH}(#{BRANCH}|#{UNSTAGED})> "
           end
         end
       end
@@ -57,7 +56,7 @@ describe Prompt do
             # One unstaged file change
             File.write "file1", "text"
 
-            Prompt.string.should eq "#{GITSH}(#{HEAD}|#{STAGED}#{UNSTAGED})> "
+            Prompt.string.should eq "#{GITSH}(#{BRANCH}|#{STAGED}#{UNSTAGED})> "
           end
         end
       end
