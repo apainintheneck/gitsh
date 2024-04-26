@@ -3,18 +3,15 @@ require "./prompt"
 require "linenoise"
 require "process"
 
+HISTORY_FILE = File.expand_path("~/.gitsh_history", home: true)
+Linenoise.load_history(HISTORY_FILE)
+Linenoise.max_history(500)
+
 Linenoise::Completion.add(Git.commands + %w[exit quit])
 Linenoise::Completion.enable_hints!
+Linenoise::Completion.prefer_shorter_matches!
 
-puts <<-WELCOME
-# Welcome to gitsh!
-# This is a simple wrapper around Git that acts like a shell.
-#
-# Type any Git subcommand to run it without prefixing 'git'.
-# Type 'sh' before running any normal shell commands.
-# Type 'exit' or 'quit' to leave this shell.
-#############################################################
-WELCOME
+puts "# Welcome to gitsh!"
 
 loop do
   line = Linenoise.prompt(Prompt.string).try(&.strip)
@@ -35,4 +32,5 @@ loop do
   Git.run(args)
 
   Linenoise.add_history(line)
+  Linenoise.save_history(HISTORY_FILE)
 end
