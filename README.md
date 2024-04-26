@@ -1,24 +1,32 @@
 # gitsh
 
-A simple shell wrapper for Git that provides completions, history and doesn't require you to prefix `git` to each command.
+A simple shell wrapper for Git that provides completions, history and doesn't require you to add the `git` prefix to each command.
 
-Based on: https://gist.github.com/apainintheneck/ddc87043a645e87f2d9e02b69be155b6
+Based on this awk abomination: https://gist.github.com/apainintheneck/ddc87043a645e87f2d9e02b69be155b6
 
 ## Installation
 
-TODO: Write installation instructions here
+1. Clone this repo
+2. Run `shards build --release`
+3. Checkout `./bin/gitsh`
 
 ## Usage
 
-TODO: Write usage instructions here
+- Type any Git subcommand to run it without prefixing 'git'.
+- Type 'exit' or 'quit' to leave.
+- Use the arrow keys for command line history.
+- Linenoise provides inline editing as well.
 
 ## Development
 
-TODO: Write development instructions here
+- Install: `shards install`
+- Running: `shards run`
+- Linting: `crystal tool format`
+- Testing: `crystal spec`
 
 ## Contributing
 
-1. Fork it (<https://github.com/your-github-user/gitsh/fork>)
+1. Fork it (<https://github.com/apainintheneck/gitsh/fork>)
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
@@ -26,4 +34,4 @@ TODO: Write development instructions here
 
 ## Contributors
 
-- [apainintheneck](https://github.com/your-github-user) - creator and maintainer
+- [apainintheneck](https://github.com/apainintheneck) - creator and maintainer
