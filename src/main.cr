@@ -1,36 +1,33 @@
-require "./git"
-require "./prompt"
-require "linenoise"
-require "process"
+require "option_parser"
+require "./repl"
 
-HISTORY_FILE = File.expand_path("~/.gitsh_history", home: true)
-Linenoise.load_history(HISTORY_FILE)
-Linenoise.max_history(500)
+OptionParser.parse do |parser|
+  parser.banner = <<-BANNER
+  gitsh -- a simple shell for git
 
-Linenoise::Completion.add(Git.commands + %w[exit quit])
-Linenoise::Completion.enable_hints!
-Linenoise::Completion.prefer_shorter_matches!
+  This shell includes completions and history.
+  Run any `git` command without prefixing `git`
+  and just `exit` when you're done.
 
-puts "# Welcome to gitsh!"
+  Options:
+  BANNER
 
-loop do
-  line = Linenoise.prompt(Prompt.string).try(&.strip)
-  break if line.nil?
-
-  args = Process.parse_arguments(line)
-  next if args.empty?
-
-  case args.first
-  when "git"
-    puts "Warn: 'git' is added automatically before all commands"
-    args.shift
-  when "exit", "quit"
-    puts "Have a nice day!"
-    break
+  parser.on("--history-path", "Path to the history file") do
+    puts REPL::HISTORY_FILE
+    exit
   end
 
-  Git.run(args)
+  parser.on("-h", "--help", "Show this help page") do
+    puts parser
+    exit
+  end
 
-  Linenoise.add_history(line)
-  Linenoise.save_history(HISTORY_FILE)
+  parser.invalid_option do |flag|
+    STDERR.puts "ERROR: #{flag} is not a valid option."
+    STDERR.puts
+    STDERR.puts parser
+    exit(1)
+  end
 end
+
+REPL.run!
