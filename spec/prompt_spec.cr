@@ -6,7 +6,7 @@ BRANCH    = "main".colorize(:magenta).mode(:bold)
 CHECK     = "✔".colorize(:green).mode(:bold)
 STAGED    = "●2".colorize(:yellow)
 UNSTAGED  = "+1".colorize(:blue)
-SUCCESS   = 0
+SUCCESS   =   0
 FAILURE   = 127
 EXIT_CODE = "[127]".colorize(:red)
 
