@@ -31,4 +31,4 @@ jobs:
         run: crystal tool format --check
 
       - name: Run specs
-        run: crystal spec
+        run: crystal spec --order random

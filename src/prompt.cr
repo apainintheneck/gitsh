@@ -3,43 +3,54 @@ require "./git"
 module Prompt
   @@default : String?
 
-  def self.string : String
+  def self.string(exit_code : Int32 = 0) : String
     if Git.repo?
-      changes = Git.uncommitted_changes
       build(
+        status: exit_code,
         branch: Git.current_branch,
-        unstaged_changes: changes[:unstaged_count],
-        staged_changes: changes[:staged_count],
+        changes: Git.uncommitted_changes,
       )
     else
-      @@default ||= build
+      build(status: exit_code)
     end
   end
 
-  private def self.build(branch : String? = nil, unstaged_changes : UInt32 = 0, staged_changes : UInt32 = 0) : String
+  private def self.build(status : Int32, branch : String? = nil, changes : Git::Changes? = nil) : String
     String.build do |str|
       str << "gitsh".colorize(:light_cyan).mode(:bold)
+
       if branch
-        str << "(" << branch.colorize(:magenta).mode(:bold) << "|"
+        str << "(" << branch.colorize(:magenta).mode(:bold)
 
-        if unstaged_changes.zero? && staged_changes.zero?
-          str << "✔".colorize(:green).mode(:bold)
-        end
+        if changes
+          str << "|"
 
-        if staged_changes.positive?
-          Colorize.with.yellow.surround(str) do
-            str << "●" << staged_changes
+          if changes.unstaged_count.zero? && changes.staged_count.zero?
+            str << "✔".colorize(:green).mode(:bold)
           end
-        end
 
-        if unstaged_changes.positive?
-          Colorize.with.blue.surround(str) do
-            str << "+" << unstaged_changes
+          if changes.staged_count.positive?
+            Colorize.with.yellow.surround(str) do
+              str << "●" << changes.staged_count
+            end
+          end
+
+          if changes.unstaged_count.positive?
+            Colorize.with.blue.surround(str) do
+              str << "+" << changes.unstaged_count
+            end
           end
         end
 
         str << ")"
       end
+
+      if status.positive?
+        Colorize.with.red.surround(str) do
+          str << "[" << status << "]"
+        end
+      end
+
       str << "> "
     end
   end
