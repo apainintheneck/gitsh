@@ -41,8 +41,10 @@ module Git
     branch
   end
 
+  record Changes, staged_count : UInt32, unstaged_count : UInt32
+
   # Get the counts of uncommitted changes for the shell prompt.
-  def self.uncommitted_changes : NamedTuple(staged_count: UInt32, unstaged_count: UInt32)
+  def self.uncommitted_changes : Changes
     buffer = IO::Memory.new
 
     Process.run(
@@ -59,10 +61,7 @@ module Git
       unstaged_count += 1 if ('A'..'Z').covers?(line[1])
     end
 
-    {
-      staged_count:   staged_count,
-      unstaged_count: unstaged_count,
-    }
+    Changes.new staged_count: staged_count, unstaged_count: unstaged_count
   end
 
   @@commands : Array(String) = begin
