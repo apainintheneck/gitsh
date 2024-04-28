@@ -18,9 +18,11 @@ module REPL
 
     puts "# Welcome to gitsh!"
 
+    exit_code = 0
+
     # Run the shell REPL in a loop.
     loop do
-      line = Linenoise.prompt(Prompt.string).try(&.strip)
+      line = Linenoise.prompt(Prompt.string(exit_code)).try(&.strip)
       break if line.nil?
 
       args = Process.parse_arguments(line)
@@ -35,7 +37,7 @@ module REPL
         break
       end
 
-      Git.run(args)
+      exit_code = Git.run(args).exit_code
 
       # Save the current input line to the shell history.
       Linenoise.add_history(line)

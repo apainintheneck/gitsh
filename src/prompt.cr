@@ -3,18 +3,19 @@ require "./git"
 module Prompt
   @@default : String?
 
-  def self.string : String
+  def self.string(exit_code : Int32 = 0) : String
     if Git.repo?
       build(
+        status: exit_code,
         branch: Git.current_branch,
         changes: Git.uncommitted_changes,
       )
     else
-      @@default ||= build
+      build(status: exit_code)
     end
   end
 
-  private def self.build(branch : String? = nil, changes : Git::Changes? = nil) : String
+  private def self.build(status : Int32, branch : String? = nil, changes : Git::Changes? = nil) : String
     String.build do |str|
       str << "gitsh".colorize(:light_cyan).mode(:bold)
 
@@ -42,6 +43,12 @@ module Prompt
         end
 
         str << ")"
+      end
+
+      if status.positive?
+        Colorize.with.red.surround(str) do
+          str << "[" << status << "]"
+        end
       end
 
       str << "> "
