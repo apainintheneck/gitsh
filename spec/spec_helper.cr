@@ -10,7 +10,7 @@ require "process"
   ENV["GIT_#{role}_DATE"] = "Sun Jan 22 19:59:13 2017 +0000"
 end
 
-module Test
+module TestShell
   # Runs a system command without printing to stdout or stderr.
   def self.quiet_system(command)
     Process.run(
@@ -45,11 +45,11 @@ module TestDir
   # The given block is then run in this directory.
   def self.with_git_repo(&block)
     in_temp_directory do
-      Test.quiet_system("git init")
+      TestShell.quiet_system("git init")
       # Add a commit to be able to set the branch name.
       FileUtils.touch ".keep"
-      Test.quiet_system("git add .keep && git commit -m 'init'")
-      Test.quiet_system("git branch -m main")
+      TestShell.quiet_system("git add .keep && git commit -m 'init'")
+      TestShell.quiet_system("git branch -m main")
 
       block.call
     end
