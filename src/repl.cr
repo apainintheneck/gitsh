@@ -41,6 +41,7 @@ module REPL
         # Don't save lines with syntax or parsing errors to the shell history.
         nil
       in .exit?
+        # The user entered 'exit' or 'quit'.
         return
       end
 

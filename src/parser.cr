@@ -4,6 +4,7 @@ require "./tokenizer"
 module Parser
   class Exception < Exception; end
 
+  # Parse the line of input into a series of commands.
   def self.parse(line : String) : Array(Command)
     command_list = [] of Command
     tokens = Tokenizer.tokenize(line)
@@ -21,15 +22,16 @@ module Parser
 
     tokens.each_cons_pair do |prev_token, token|
       case {prev_token.type, token.type}
-      when {_, .string?}
+      when {_, .string?} # Token is a string.
         command_list.last.arguments << token.content
-      when {.string?, _}
+      when {.string?, _} # Token is an action.
         command_list << Command.new(action: token.type.to_action!)
       else
         raise Exception.new(message: "#{token.location}: Expected a string after '#{prev_token.content}' but got '#{token.content}' instead")
       end
     end
 
+    # Remove any trailing semicolons from the command list.
     command_list.pop if command_list.last.action.end? && command_list.last.arguments.empty?
 
     command_list

@@ -1,3 +1,11 @@
+# Represents a single shell command and action pair.
+# - Action: The logical action between the previous command and this one.
+# - Command: The shell command to run as an array of strings.
+#
+# There are three possible actions:
+# 1. '&&' - Requires the previous command to exit successfully.
+# 2. '||' - Requires the previous command to fail.
+# 3. ';'  - Runs no matter what happened with the previous command.
 class Command
   def_equals @action, @arguments # for testing
 
