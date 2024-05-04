@@ -22,6 +22,11 @@ OptionParser.parse do |parser|
     exit
   end
 
+  parser.on("-v", "--version", "Show the current version") do
+    puts "0.2.0"
+    exit
+  end
+
   parser.on("-h", "--help", "Show this help page") do
     puts parser
     exit
