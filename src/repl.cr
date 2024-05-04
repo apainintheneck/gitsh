@@ -1,3 +1,5 @@
+require "./command"
+require "./executor"
 require "./git"
 require "./prompt"
 require "linenoise"
@@ -7,6 +9,8 @@ module REPL
   HISTORY_FILE = File.expand_path("~/.gitsh_history", home: true)
 
   def self.run!
+    Linenoise.set_multiline(true)
+
     # Set up shell history.
     Linenoise.load_history(HISTORY_FILE)
     Linenoise.max_history(500)
@@ -24,24 +28,24 @@ module REPL
     loop do
       line = Linenoise.prompt(Prompt.string(exit_code)).try(&.strip)
       break if line.nil?
+      next if line.blank?
 
-      args = Process.parse_arguments(line)
-      next if args.empty?
+      result = Executor.execute_line(line)
 
-      case args.first
-      when "git"
-        puts "Warn: 'git' is added automatically before all commands"
-        args.shift
-      when "exit", "quit"
-        puts "Have a nice day!"
-        break
+      case result.type
+      in .success?
+        # Save the current input line to the shell history.
+        Linenoise.add_history(line)
+        Linenoise.save_history(HISTORY_FILE)
+      in .failure?
+        # Don't save lines with syntax or parsing errors to the shell history.
+        nil
+      in .exit?
+        # The user entered 'exit' or 'quit'.
+        return
       end
 
-      exit_code = Git.run(args).exit_code
-
-      # Save the current input line to the shell history.
-      Linenoise.add_history(line)
-      Linenoise.save_history(HISTORY_FILE)
+      exit_code = result.exit_code
     end
   end
 end

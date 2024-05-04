@@ -1,8 +1,6 @@
 # gitsh
 
-A simple shell wrapper for Git that provides completions, history and doesn't require you to add the `git` prefix to each command.
-
-Based on this awk abomination: https://gist.github.com/apainintheneck/ddc87043a645e87f2d9e02b69be155b6
+A simple shell wrapper for Git that provides logical shell operators, completions, history and doesn't require you to add the `git` prefix to each command.
 
 ## Installation
 
@@ -31,6 +29,11 @@ Based on this awk abomination: https://gist.github.com/apainintheneck/ddc87043a6
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create a new Pull Request
+
+## Inspired By
+- [zbg](https://github.com/chshersh/zbg) : `zbg` (short for Zero Bullshit Git) is a CLI tool for using `git` efficiently.
+- [gitsh.awk](https://gist.github.com/apainintheneck/ddc87043a645e87f2d9e02b69be155b6) : A simplistic `gawk` based `git` shell.
+- [fish-shell](https://github.com/fish-shell/fish-shell) : The `fish` shell has a great set of built-in integrations with `git`.
 
 ## Contributors
 

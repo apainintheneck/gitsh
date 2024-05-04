@@ -86,12 +86,12 @@ module Git
   end
 
   # Run Git with the given arguments.
-  def self.run(args : Array(String)) : Process::Status
+  def self.run(args : Array(String), output : IO = STDOUT, error : IO = STDERR) : Process::Status
     Process.run(
       command: executable_path,
       args: args,
-      output: :inherit,
-      error: :inherit,
+      output: output,
+      error: error,
       input: :inherit,
     )
   end

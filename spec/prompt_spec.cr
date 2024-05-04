@@ -28,7 +28,7 @@ describe Prompt do
               # Two staged file changes
               FileUtils.touch "file1"
               FileUtils.touch "file2"
-              Test.quiet_system("git add file1 file2")
+              TestShell.quiet_system("git add file1 file2")
 
               Prompt.string(SUCCESS).should eq "#{GITSH}(#{BRANCH}|#{STAGED})> "
             end
@@ -40,8 +40,8 @@ describe Prompt do
             TestDir.with_git_repo do
               # Commit one file
               FileUtils.touch "file1"
-              Test.quiet_system("git add file1")
-              Test.quiet_system("git commit -m 'first'")
+              TestShell.quiet_system("git add file1")
+              TestShell.quiet_system("git commit -m 'first'")
               # One unstaged file change
               File.write "file1", "text"
 
@@ -56,7 +56,7 @@ describe Prompt do
               # Two staged file changes
               FileUtils.touch "file1"
               FileUtils.touch "file2"
-              Test.quiet_system("git add file1 file2")
+              TestShell.quiet_system("git add file1 file2")
               # One unstaged file change
               File.write "file1", "text"
 
@@ -91,7 +91,7 @@ describe Prompt do
               # Two staged file changes
               FileUtils.touch "file1"
               FileUtils.touch "file2"
-              Test.quiet_system("git add file1 file2")
+              TestShell.quiet_system("git add file1 file2")
 
               Prompt.string(FAILURE).should eq "#{GITSH}(#{BRANCH}|#{STAGED})#{EXIT_CODE}> "
             end
@@ -103,8 +103,8 @@ describe Prompt do
             TestDir.with_git_repo do
               # Commit one file
               FileUtils.touch "file1"
-              Test.quiet_system("git add file1")
-              Test.quiet_system("git commit -m 'first'")
+              TestShell.quiet_system("git add file1")
+              TestShell.quiet_system("git commit -m 'first'")
               # One unstaged file change
               File.write "file1", "text"
 
@@ -119,7 +119,7 @@ describe Prompt do
               # Two staged file changes
               FileUtils.touch "file1"
               FileUtils.touch "file2"
-              Test.quiet_system("git add file1 file2")
+              TestShell.quiet_system("git add file1 file2")
               # One unstaged file change
               File.write "file1", "text"
 
