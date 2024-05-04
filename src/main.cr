@@ -12,6 +12,11 @@ OptionParser.parse do |parser|
   Options:
   BANNER
 
+  # TODO: Add the following commands
+  # --check-config : Validate the config file commands
+  # --config-path  : Path to the config file
+  # --reset-config : Reset the config file to its default state
+
   parser.on("--history-path", "Path to the history file") do
     puts REPL::HISTORY_FILE
     exit
