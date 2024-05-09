@@ -6,13 +6,11 @@ require "linenoise"
 require "process"
 
 module REPL
-  HISTORY_FILE = File.expand_path("~/.gitsh_history", home: true)
-
   def self.run!
     Linenoise.set_multiline(true)
 
     # Set up shell history.
-    Linenoise.load_history(HISTORY_FILE)
+    Linenoise.load_history(History::FILE.to_s)
     Linenoise.max_history(500)
 
     # Set up shell completions.
@@ -36,7 +34,7 @@ module REPL
       in .success?
         # Save the current input line to the shell history.
         Linenoise.add_history(line)
-        Linenoise.save_history(HISTORY_FILE)
+        Linenoise.save_history(History::FILE.to_s)
       in .failure?
         # Don't save lines with syntax or parsing errors to the shell history.
         nil

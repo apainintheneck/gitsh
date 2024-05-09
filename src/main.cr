@@ -1,5 +1,8 @@
 require "option_parser"
+require "./history"
 require "./repl"
+
+History.init
 
 OptionParser.parse do |parser|
   parser.banner = <<-BANNER
@@ -18,7 +21,7 @@ OptionParser.parse do |parser|
   # --reset-config : Reset the config file to its default state
 
   parser.on("--history-path", "Path to the history file") do
-    puts REPL::HISTORY_FILE
+    puts History::FILE
     exit
   end
 

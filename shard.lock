@@ -4,3 +4,7 @@ shards:
     git: https://github.com/apainintheneck/crystal-linenoise.git
     version: 0.4.0
 
+  xdg:
+    git: https://github.com/dscottboggs/xdg.cr.git
+    version: 1.3.0
+
