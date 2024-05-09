@@ -8,6 +8,9 @@ dependencies:
   linenoise:
     github: apainintheneck/crystal-linenoise
     version: 0.4.0
+  xdg:
+    github: dscottboggs/xdg.cr
+    version: 1.3.0
 
 targets:
   gitsh:
