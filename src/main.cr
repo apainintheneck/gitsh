@@ -1,7 +1,9 @@
 require "option_parser"
+require "./config"
 require "./history"
 require "./repl"
 
+Config.init
 History.init
 
 OptionParser.parse do |parser|
@@ -15,10 +17,19 @@ OptionParser.parse do |parser|
   Options:
   BANNER
 
-  # TODO: Add the following commands
-  # --check-config : Validate the config file commands
-  # --config-path  : Path to the config file
-  # --reset-config : Reset the config file to its default state
+  parser.on("--validate-config", "Validate the config file contents") do
+    exit Config.valid? ? 0 : 1
+  end
+
+  parser.on("--reset-config", "Reset the config file to its default state") do
+    Config.reset
+    exit
+  end
+
+  parser.on("--config-path", "Path to the config file") do
+    puts Config::FILE
+    exit
+  end
 
   parser.on("--history-path", "Path to the history file") do
     puts History::FILE
