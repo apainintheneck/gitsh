@@ -2,9 +2,7 @@ require "option_parser"
 require "./config"
 require "./history"
 require "./repl"
-
-Config.init
-History.init
+require "./validator"
 
 OptionParser.parse do |parser|
   parser.banner = <<-BANNER
@@ -17,22 +15,22 @@ OptionParser.parse do |parser|
   Options:
   BANNER
 
-  parser.on("--validate-config", "Validate the config file contents") do
-    exit Config.valid? ? 0 : 1
+  parser.on("--diagnostic-check", "Validate the environment, config and history") do
+    Validator.diagnostic_check!
   end
 
   parser.on("--reset-config", "Reset the config file to its default state") do
-    Config.reset
+    Config.write_default!
     exit
   end
 
   parser.on("--config-path", "Path to the config file") do
-    puts Config::FILE
+    puts Config::FILE_PATH
     exit
   end
 
   parser.on("--history-path", "Path to the history file") do
-    puts History::FILE
+    puts History::FILE_PATH
     exit
   end
 
@@ -47,10 +45,11 @@ OptionParser.parse do |parser|
   end
 
   parser.invalid_option do |flag|
-    STDERR.puts "ERROR: #{flag} is not a valid option."
-    STDERR.puts
-    STDERR.puts parser
-    exit(1)
+    abort <<-ERROR
+      Error: #{flag} is not a valid option.
+
+      #{parser}
+      ERROR
   end
 end
 

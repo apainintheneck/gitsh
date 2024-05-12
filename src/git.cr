@@ -4,8 +4,7 @@ module Git
   @@executable_path : String = begin
     Process.find_executable("git").not_nil!
   rescue NilAssertionError
-    STDERR.puts "Error: Git cannot be found in path"
-    exit(1)
+    abort "Error: Git cannot be found in path"
   end
 
   def self.executable_path : String
