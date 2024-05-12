@@ -25,27 +25,14 @@ module Config
     nil
   end
 
-  def self.load_file(file_path : Path)
-    write_default! unless File.exists?(file_path)
+  class_getter config_hash : Hash(String, Hash(String, String)) do
+    write_default! unless File.exists?(FILE_PATH)
 
-    File.open(file_path) do |file|
+    File.open(FILE_PATH) do |file|
       INI.parse(file)
     rescue
       INI.parse(Default::CONFIG)
     end
-  end
-
-  # Load a new config file in place and reset all of the
-  # associated values parsed from the old config file.
-  # Needed for testing.
-  def self.load_file!(file_path : Path)
-    clear!
-    @@config_hash = load_file(file_path)
-    nil
-  end
-
-  class_getter config_hash : Hash(String, Hash(String, String)) do
-    load_file(FILE_PATH)
   end
 
   class_getter aliases : Hash(String, String) do

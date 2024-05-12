@@ -65,6 +65,8 @@ class Validator
   end
 
   add_validation "Config Sections" do
+    next unless File.exists?(Config::FILE_PATH)
+
     Config.config_hash.keys.sort.compact_map do |section|
       next if Config::SECTIONS.includes?(section)
 
@@ -96,6 +98,8 @@ class Validator
   end
 
   add_validation "History Size" do
+    next unless File.exists?(Config::FILE_PATH)
+
     history_hash = Config.config_hash["history"]?
     next unless history_hash
     next unless history_hash.includes?("size")
@@ -108,6 +112,8 @@ class Validator
   end
 
   add_validation "History Section" do
+    next unless File.exists?(Config::FILE_PATH)
+
     history_hash = Config.config_hash["history"]?
     next unless history_hash
 
@@ -119,6 +125,8 @@ class Validator
   end
 
   add_validation "Aliases" do
+    next unless File.exists?(Config::FILE_PATH)
+
     Config.aliases.each do |name, line|
       unless Parser.parse(line).size == 1
         "Invalid alias includes boolean logic: '#{name}' = '#{line}'"
@@ -129,6 +137,8 @@ class Validator
   end
 
   add_validation "Commands" do
+    next unless File.exists?(Config::FILE_PATH)
+
     Config.commands.compact_map do |name, line|
       Parser.parse(line)
       nil
