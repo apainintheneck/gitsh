@@ -16,11 +16,11 @@ OptionParser.parse do |parser|
   BANNER
 
   parser.on("--diagnostic-check", "Validate the environment, config and history") do
-    Validator.diagnostic_check!
+    exit Validator.diagnostic_check? ? 0 : 1
   end
 
   parser.on("--reset-config", "Reset the config file to its default state") do
-    Config.write_default!
+    Config.write_default
     exit
   end
 

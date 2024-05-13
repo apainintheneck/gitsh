@@ -12,43 +12,58 @@ module Config
     HISTORY_SIZE = 5_000_u32
   end
 
-  def self.clear!
-    @@config_hash = nil
-    @@aliases = nil
-    @@commands = nil
-    @@history_size = nil
-  end
-
-  def self.write_default!
+  def self.write_default
     FileUtils.mkdir_p(DIRECTORY)
     File.write(FILE_PATH, Default::CONFIG)
     nil
   end
 
-  class_getter config_hash : Hash(String, Hash(String, String)) do
-    write_default! unless File.exists?(FILE_PATH)
+  @@config_hash : Hash(String, Hash(String, String))?
 
-    File.open(FILE_PATH) do |file|
-      INI.parse(file)
-    rescue
-      INI.parse(Default::CONFIG)
+  def self.config_hash : Hash(String, Hash(String, String))
+    @@config_hash ||= begin
+      write_default unless File.exists?(FILE_PATH)
+
+      begin
+        content = File.read(FILE_PATH)
+        INI.parse(content)
+      rescue
+        INI.parse(Default::CONFIG)
+      end
     end
   end
 
-  class_getter aliases : Hash(String, String) do
-    config_hash.fetch("aliases") do
-      {} of String => String
+  @@aliases : Hash(String, String)?
+
+  def self.aliases : Hash(String, String)
+    @@aliases ||= begin
+      config_hash.fetch("aliases") do
+        {} of String => String
+      end
     end
   end
 
-  class_getter commands : Hash(String, String) do
-    config_hash.fetch("commands") do
-      {} of String => String
+  @@commands : Hash(String, String)?
+
+  def self.commands : Hash(String, String)
+    @@commands ||= begin
+      config_hash.fetch("commands") do
+        {} of String => String
+      end
     end
   end
 
-  class_getter history_size : UInt32 do
-    size_string = config_hash.dig? "history", "size"
-    size_string.try &.to_u32? || Default::HISTORY_SIZE
+  def self.history_size : UInt32
+    @@history_size ||= begin
+      size_string = config_hash.dig? "history", "size"
+      size_string.try &.to_u32? || Default::HISTORY_SIZE
+    end
+  end
+
+  def self.clear
+    @@aliases = nil
+    @@commands = nil
+    @@config_hash = nil
+    @@history_size = nil
   end
 end

@@ -8,7 +8,7 @@ require "process"
 
 module REPL
   def self.run!
-    History.init!
+    History.init
 
     Linenoise.set_multiline(true)
 

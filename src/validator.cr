@@ -9,7 +9,7 @@ class Validator
     @validation = validation
   end
 
-  getter offenses : Array(String) do
+  def offenses : Array(String)
     result = begin
       @validation.call
     rescue ex
@@ -33,29 +33,28 @@ class Validator
   # Class
   @@validations = {} of String => Validator
 
-  def self.all_valid?
+  def self.all_valid? : Bool
     @@validations.all? do |_name, validator|
       validator.valid?
     end
   end
 
-  def self.diagnostic_check!
+  def self.diagnostic_check?(output : IO = STDOUT) : Bool
     is_valid = true
 
     @@validations.to_a.sort_by(&.first).each do |name, validator|
-      if validator.valid?
-        puts "[#{name}] ✔"
+      if (offenses = validator.offenses).empty?
+        output.puts "[#{name}] ✔"
       else
-        puts "[#{name}] ✘"
-        validator.offenses.each do |offense|
-          puts "- #{offense}"
+        output.puts "[#{name}] ✘"
+        offenses.each do |offense|
+          output.puts "- #{offense}"
         end
+        is_valid = false
       end
-
-      is_valid &&= validator.valid?
     end
 
-    exit is_valid ? 0 : 1
+    is_valid
   end
 
   private def self.add_validation(name : String, &validation : -> Nil | String | Array(String))
@@ -70,7 +69,7 @@ class Validator
     Config.config_hash.keys.sort.compact_map do |section|
       next if Config::SECTIONS.includes?(section)
 
-      "Unknown section '#{section}' found in the config file"
+      "Unexpected section '#{section}' found in the config file"
     end
   end
 
@@ -93,7 +92,7 @@ class Validator
       File.read(History::FILE_PATH)
       nil
     rescue
-      "Invalid history file: #{Config::FILE_PATH}"
+      "Invalid history file: #{History::FILE_PATH}"
     end
   end
 
@@ -102,7 +101,7 @@ class Validator
 
     history_hash = Config.config_hash["history"]?
     next unless history_hash
-    next unless history_hash.includes?("size")
+    next unless history_hash.has_key?("size")
 
     raw_size = history_hash["size"]?
     size = raw_size.try &.to_u32?
@@ -120,15 +119,15 @@ class Validator
     history_hash.keys.compact_map do |key|
       next if key == "size"
 
-      "Unknown history section key in the config file: '#{key}'"
+      "Unexpected history section key in the config file: '#{key}'"
     end
   end
 
   add_validation "Aliases" do
     next unless File.exists?(Config::FILE_PATH)
 
-    Config.aliases.each do |name, line|
-      unless Parser.parse(line).size == 1
+    Config.aliases.compact_map do |name, line|
+      if Parser.parse(line).size != 1
         "Invalid alias includes boolean logic: '#{name}' = '#{line}'"
       end
     rescue
