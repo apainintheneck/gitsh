@@ -6,6 +6,8 @@ describe Validator do
     Config.clear
     File.delete?(History::FILE_PATH)
     File.delete?(Config::FILE_PATH)
+    Dir.delete?(History::DIRECTORY)
+    Dir.delete?(Config::DIRECTORY)
   end
 
   describe "with default settings" do
@@ -58,6 +60,7 @@ describe Validator do
   end
 
   it "fails with an invalid alias" do
+    FileUtils.mkdir_p(Config::DIRECTORY)
     File.write(Config::FILE_PATH, <<-INI)
     [aliases]
     invalid = add --all && commit -m 'tmp'
@@ -84,6 +87,7 @@ describe Validator do
   end
 
   it "fails with an invalid command" do
+    FileUtils.mkdir_p(Config::DIRECTORY)
     File.write(Config::FILE_PATH, <<-INI)
     [commands]
     invalid = && add -all && commit
@@ -133,6 +137,7 @@ describe Validator do
   end
 
   it "fails with an unparsable config file" do
+    FileUtils.mkdir_p(Config::DIRECTORY)
     File.write(Config::FILE_PATH, "INVALID INI FILE FORMAT")
 
     Config.config_hash
@@ -155,6 +160,7 @@ describe Validator do
   end
 
   it "fails with an unexpected config section" do
+    FileUtils.mkdir_p(Config::DIRECTORY)
     File.write(Config::FILE_PATH, <<-INI)
     [commands]
     valid = add -all && commit
@@ -206,6 +212,7 @@ describe Validator do
   end
 
   it "fails with an unexpected history section key" do
+    FileUtils.mkdir_p(Config::DIRECTORY)
     File.write(Config::FILE_PATH, <<-INI)
     [history]
     size = 100
@@ -232,6 +239,7 @@ describe Validator do
   end
 
   it "fails with an invalid history size" do
+    FileUtils.mkdir_p(Config::DIRECTORY)
     File.write(Config::FILE_PATH, <<-INI)
     [history]
     size = sldkfsd
