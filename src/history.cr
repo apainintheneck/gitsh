@@ -8,7 +8,12 @@ module History
   def self.init
     return if File.exists?(FILE_PATH)
 
-    FileUtils.mkdir_p(DIRECTORY)
-    FileUtils.touch(FILE_PATH)
+    begin
+      FileUtils.mkdir_p(DIRECTORY)
+      FileUtils.touch(FILE_PATH)
+    rescue
+      # Eat this error since we will flag this
+      # in the validator and diagnostic command.
+    end
   end
 end
