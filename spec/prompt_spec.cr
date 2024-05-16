@@ -14,126 +14,122 @@ describe Prompt do
   describe ".string" do
     context "with zero exit code" do
       context "with git repo" do
+        around_each do |example|
+          TestDir.with_git_repo { example.run }
+        end
+
         context "with no changes" do
           it "returns expected prompt" do
-            TestDir.with_git_repo do
-              Prompt.string(SUCCESS).should eq "#{GITSH}(#{BRANCH}|#{CHECK})> "
-            end
+            Prompt.string(SUCCESS).should eq "#{GITSH}(#{BRANCH}|#{CHECK})> "
           end
         end
 
         context "with 2 staged changes" do
           it "returns expected prompt" do
-            TestDir.with_git_repo do
-              # Two staged file changes
-              FileUtils.touch "file1"
-              FileUtils.touch "file2"
-              TestShell.quiet_system("git add file1 file2")
+            # Two staged file changes
+            FileUtils.touch "file1"
+            FileUtils.touch "file2"
+            TestShell.quiet_system("git add file1 file2")
 
-              Prompt.string(SUCCESS).should eq "#{GITSH}(#{BRANCH}|#{STAGED})> "
-            end
+            Prompt.string(SUCCESS).should eq "#{GITSH}(#{BRANCH}|#{STAGED})> "
           end
         end
 
         context "with 1 unstaged change" do
           it "returns expected prompt" do
-            TestDir.with_git_repo do
-              # Commit one file
-              FileUtils.touch "file1"
-              TestShell.quiet_system("git add file1")
-              TestShell.quiet_system("git commit -m 'first'")
-              # One unstaged file change
-              File.write "file1", "text"
+            # Commit one file
+            FileUtils.touch "file1"
+            TestShell.quiet_system("git add file1")
+            TestShell.quiet_system("git commit -m 'first'")
+            # One unstaged file change
+            File.write "file1", "text"
 
-              Prompt.string(SUCCESS).should eq "#{GITSH}(#{BRANCH}|#{UNSTAGED})> "
-            end
+            Prompt.string(SUCCESS).should eq "#{GITSH}(#{BRANCH}|#{UNSTAGED})> "
           end
         end
 
         context "with 2 staged changes and 1 unstaged change" do
           it "returns expected prompt" do
-            TestDir.with_git_repo do
-              # Two staged file changes
-              FileUtils.touch "file1"
-              FileUtils.touch "file2"
-              TestShell.quiet_system("git add file1 file2")
-              # One unstaged file change
-              File.write "file1", "text"
+            # Two staged file changes
+            FileUtils.touch "file1"
+            FileUtils.touch "file2"
+            TestShell.quiet_system("git add file1 file2")
+            # One unstaged file change
+            File.write "file1", "text"
 
-              Prompt.string(SUCCESS).should eq "#{GITSH}(#{BRANCH}|#{STAGED}#{UNSTAGED})> "
-            end
+            Prompt.string(SUCCESS).should eq "#{GITSH}(#{BRANCH}|#{STAGED}#{UNSTAGED})> "
           end
         end
       end
 
       context "without git repo" do
+        around_each do |example|
+          TestDir.without_git_repo { example.run }
+        end
+
         it "returns default prompt string" do
-          TestDir.without_git_repo do
-            Prompt.string(SUCCESS).should eq "#{GITSH}> "
-          end
+          Prompt.string(SUCCESS).should eq "#{GITSH}> "
         end
       end
     end
 
     context "with non-zero exit code" do
       context "with git repo" do
+        around_each do |example|
+          TestDir.with_git_repo { example.run }
+        end
+
         context "with no changes" do
           it "returns expected prompt" do
-            TestDir.with_git_repo do
-              Prompt.string(FAILURE).should eq "#{GITSH}(#{BRANCH}|#{CHECK})#{EXIT_CODE}> "
-            end
+            Prompt.string(FAILURE).should eq "#{GITSH}(#{BRANCH}|#{CHECK})#{EXIT_CODE}> "
           end
         end
 
         context "with 2 staged changes" do
           it "returns expected prompt" do
-            TestDir.with_git_repo do
-              # Two staged file changes
-              FileUtils.touch "file1"
-              FileUtils.touch "file2"
-              TestShell.quiet_system("git add file1 file2")
+            # Two staged file changes
+            FileUtils.touch "file1"
+            FileUtils.touch "file2"
+            TestShell.quiet_system("git add file1 file2")
 
-              Prompt.string(FAILURE).should eq "#{GITSH}(#{BRANCH}|#{STAGED})#{EXIT_CODE}> "
-            end
+            Prompt.string(FAILURE).should eq "#{GITSH}(#{BRANCH}|#{STAGED})#{EXIT_CODE}> "
           end
         end
 
         context "with 1 unstaged change" do
           it "returns expected prompt" do
-            TestDir.with_git_repo do
-              # Commit one file
-              FileUtils.touch "file1"
-              TestShell.quiet_system("git add file1")
-              TestShell.quiet_system("git commit -m 'first'")
-              # One unstaged file change
-              File.write "file1", "text"
+            # Commit one file
+            FileUtils.touch "file1"
+            TestShell.quiet_system("git add file1")
+            TestShell.quiet_system("git commit -m 'first'")
+            # One unstaged file change
+            File.write "file1", "text"
 
-              Prompt.string(FAILURE).should eq "#{GITSH}(#{BRANCH}|#{UNSTAGED})#{EXIT_CODE}> "
-            end
+            Prompt.string(FAILURE).should eq "#{GITSH}(#{BRANCH}|#{UNSTAGED})#{EXIT_CODE}> "
           end
         end
 
         context "with 2 staged changes and 1 unstaged change" do
           it "returns expected prompt" do
-            TestDir.with_git_repo do
-              # Two staged file changes
-              FileUtils.touch "file1"
-              FileUtils.touch "file2"
-              TestShell.quiet_system("git add file1 file2")
-              # One unstaged file change
-              File.write "file1", "text"
+            # Two staged file changes
+            FileUtils.touch "file1"
+            FileUtils.touch "file2"
+            TestShell.quiet_system("git add file1 file2")
+            # One unstaged file change
+            File.write "file1", "text"
 
-              Prompt.string(FAILURE).should eq "#{GITSH}(#{BRANCH}|#{STAGED}#{UNSTAGED})#{EXIT_CODE}> "
-            end
+            Prompt.string(FAILURE).should eq "#{GITSH}(#{BRANCH}|#{STAGED}#{UNSTAGED})#{EXIT_CODE}> "
           end
         end
       end
 
       context "without git repo" do
+        around_each do |example|
+          TestDir.without_git_repo { example.run }
+        end
+
         it "returns default prompt string" do
-          TestDir.without_git_repo do
-            Prompt.string(FAILURE).should eq "#{GITSH}#{EXIT_CODE}> "
-          end
+          Prompt.string(FAILURE).should eq "#{GITSH}#{EXIT_CODE}> "
         end
       end
     end
