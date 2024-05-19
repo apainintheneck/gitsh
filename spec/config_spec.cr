@@ -20,17 +20,13 @@ describe Config do
     FileUtils.mkdir_p(Config::DIRECTORY)
     File.write(Config::FILE_PATH, <<-INI)
     [aliases]
-    current_branch = branch --show-current
-
-    [commands]
     amend = commit --amend
 
     [history]
     size = 300
     INI
 
-    Config.aliases.should eq({"current_branch" => "branch --show-current"})
-    Config.commands.should eq({"amend" => "commit --amend"})
+    Config.aliases.should eq({"amend" => "commit --amend"})
     Config.history_size.should eq(300)
   end
 
@@ -41,7 +37,6 @@ describe Config do
     INI
 
     Config.aliases.should be_a(Hash(String, String))
-    Config.commands.should be_a(Hash(String, String))
     Config.history_size.should eq(5_000)
   end
 end

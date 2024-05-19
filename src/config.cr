@@ -5,7 +5,7 @@ require "xdg"
 module Config
   DIRECTORY = XDG::CONFIG::HOME / "gitsh"
   FILE_PATH = DIRECTORY / "gitsh_config.ini"
-  SECTIONS  = Set{"aliases", "commands", "history"}
+  SECTIONS  = Set{"aliases", "history"}
 
   module Default
     CONFIG       = {{read_file("#{__DIR__}/default_config.ini")}}
@@ -43,16 +43,6 @@ module Config
     end
   end
 
-  @@commands : Hash(String, String)?
-
-  def self.commands : Hash(String, String)
-    @@commands ||= begin
-      config_hash.fetch("commands") do
-        {} of String => String
-      end
-    end
-  end
-
   def self.history_size : UInt32
     @@history_size ||= begin
       size_string = config_hash.dig? "history", "size"
@@ -62,7 +52,6 @@ module Config
 
   def self.clear
     @@aliases = nil
-    @@commands = nil
     @@config_hash = nil
     @@history_size = nil
   end

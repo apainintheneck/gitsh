@@ -127,22 +127,10 @@ class Validator
     next unless File.exists?(Config::FILE_PATH)
 
     Config.aliases.compact_map do |name, line|
-      if Parser.parse(line).size != 1
-        "Invalid alias includes boolean logic: '#{name}' = '#{line}'"
-      end
-    rescue
-      "Invalid alias: '#{name}' = '#{line}'"
-    end
-  end
-
-  add_validation "Commands" do
-    next unless File.exists?(Config::FILE_PATH)
-
-    Config.commands.compact_map do |name, line|
       Parser.parse(line)
       nil
     rescue
-      "Invalid command: '#{name}' = '#{line}'"
+      "Invalid alias: '#{name}' = '#{line}'"
     end
   end
 end

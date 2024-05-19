@@ -25,7 +25,6 @@ describe Validator do
 
         stdout_buffer.to_s.should eq(<<-OUTPUT)
         [Aliases] ✔
-        [Commands] ✔
         [Config File] ✔
         [Config Sections] ✔
         [History File] ✔
@@ -47,7 +46,6 @@ describe Validator do
 
         stdout_buffer.to_s.should eq(<<-OUTPUT)
         [Aliases] ✔
-        [Commands] ✔
         [Config File] ✔
         [Config Sections] ✔
         [History File] ✔
@@ -63,33 +61,6 @@ describe Validator do
     FileUtils.mkdir_p(Config::DIRECTORY)
     File.write(Config::FILE_PATH, <<-INI)
     [aliases]
-    invalid = add --all && commit -m 'tmp'
-    valid = help alias
-    INI
-
-    Config.config_hash
-    Validator.all_valid?.should be_false
-
-    stdout_buffer = IO::Memory.new
-    Validator.diagnostic_check?(stdout_buffer)
-
-    stdout_buffer.to_s.should eq(<<-OUTPUT)
-    [Aliases] ✘
-    - Invalid alias includes boolean logic: 'invalid' = 'add --all && commit -m 'tmp''
-    [Commands] ✔
-    [Config File] ✔
-    [Config Sections] ✔
-    [History File] ✔
-    [History Section] ✔
-    [History Size] ✔
-
-    OUTPUT
-  end
-
-  it "fails with an invalid command" do
-    FileUtils.mkdir_p(Config::DIRECTORY)
-    File.write(Config::FILE_PATH, <<-INI)
-    [commands]
     invalid = && add -all && commit
     valid = add -all && commit
     INI
@@ -101,9 +72,8 @@ describe Validator do
     Validator.diagnostic_check?(stdout_buffer)
 
     stdout_buffer.to_s.should eq(<<-OUTPUT)
-    [Aliases] ✔
-    [Commands] ✘
-    - Invalid command: 'invalid' = '&& add -all && commit'
+    [Aliases] ✘
+    - Invalid alias: 'invalid' = '&& add -all && commit'
     [Config File] ✔
     [Config Sections] ✔
     [History File] ✔
@@ -125,7 +95,6 @@ describe Validator do
 
     stdout_buffer.to_s.should eq(<<-OUTPUT)
     [Aliases] ✔
-    [Commands] ✔
     [Config File] ✘
     - Invalid config file: #{Config::FILE_PATH}
     [Config Sections] ✔
@@ -148,7 +117,6 @@ describe Validator do
 
     stdout_buffer.to_s.should eq(<<-OUTPUT)
     [Aliases] ✔
-    [Commands] ✔
     [Config File] ✘
     - Invalid config file: #{Config::FILE_PATH}
     [Config Sections] ✔
@@ -162,7 +130,7 @@ describe Validator do
   it "fails with an unexpected config section" do
     FileUtils.mkdir_p(Config::DIRECTORY)
     File.write(Config::FILE_PATH, <<-INI)
-    [commands]
+    [aliases]
     valid = add -all && commit
 
     [invalid]
@@ -177,7 +145,6 @@ describe Validator do
 
     stdout_buffer.to_s.should eq(<<-OUTPUT)
     [Aliases] ✔
-    [Commands] ✔
     [Config File] ✔
     [Config Sections] ✘
     - Unexpected section 'invalid' found in the config file
@@ -200,7 +167,6 @@ describe Validator do
 
     stdout_buffer.to_s.should eq(<<-OUTPUT)
     [Aliases] ✔
-    [Commands] ✔
     [Config File] ✔
     [Config Sections] ✔
     [History File] ✘
@@ -227,7 +193,6 @@ describe Validator do
 
     stdout_buffer.to_s.should eq(<<-OUTPUT)
     [Aliases] ✔
-    [Commands] ✔
     [Config File] ✔
     [Config Sections] ✔
     [History File] ✔
@@ -253,7 +218,6 @@ describe Validator do
 
     stdout_buffer.to_s.should eq(<<-OUTPUT)
     [Aliases] ✔
-    [Commands] ✔
     [Config File] ✔
     [Config Sections] ✔
     [History File] ✔
