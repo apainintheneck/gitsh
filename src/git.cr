@@ -13,7 +13,7 @@ module Git
 
   # Run a git command and return stdout as a string.
   # Stderr and all exit codes are ignored.
-  def self.command_to_string(args : Array(String)) : String
+  private def self.command_to_string(args : Array(String)) : String
     buffer = IO::Memory.new
 
     Process.run(
