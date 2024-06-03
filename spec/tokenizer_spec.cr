@@ -31,11 +31,23 @@ class TokenFactory
   # Note: Token position is not super important during tests and we only test for equality
   # based on token type and content for that reason.
   private def new_token(type : Tokenizer::Token::Type, content : String) : Tokenizer::Token
-    Tokenizer::Token.new(type: type, content: content, start_position: 0, end_position: 0)
+    Tokenizer::Token.new(
+      type: type,
+      content: content,
+      from_alias: nil,
+      start_position: 0,
+      end_position: 0,
+    )
   end
 end
 
 describe Tokenizer do
+  after_each do
+    Config.clear
+    File.delete?(Config::FILE_PATH)
+    Dir.delete?(Config::DIRECTORY)
+  end
+
   describe ".tokenize" do
     it "tokenizes blanks lines" do
       ["", "   ", "\t", "\n", "  \t \n"].each do |line|

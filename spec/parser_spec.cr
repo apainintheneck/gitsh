@@ -25,6 +25,12 @@ class CommandFactory
 end
 
 describe Parser do
+  after_each do
+    Config.clear
+    File.delete?(Config::FILE_PATH)
+    Dir.delete?(Config::DIRECTORY)
+  end
+
   it "parses a single command" do
     Parser.parse("checkout auto_update_tap").should eq(
       CommandFactory.new.end(%w[checkout auto_update_tap]).to_a

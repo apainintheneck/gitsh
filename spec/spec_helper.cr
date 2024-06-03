@@ -10,6 +10,11 @@ require "process"
   ENV["GIT_#{role}_DATE"] = "Sun Jan 22 19:59:13 2017 +0000"
 end
 
+# Needed to make sure that we don't overwrite the users
+# history and config files while running specs.
+ENV["XDG_CONFIG_HOME"] = Path.new(__DIR__, "xdg", "config").expand.to_s
+ENV["XDG_DATA_HOME"] = Path.new(__DIR__, "xdg", "data").expand.to_s
+
 module TestShell
   # Runs a system command without printing to stdout or stderr.
   def self.quiet_system(command)

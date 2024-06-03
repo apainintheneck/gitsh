@@ -8,6 +8,7 @@ module Parser
   def self.parse(line : String) : Array(Command)
     command_list = [] of Command
     tokens = Tokenizer.tokenize(line)
+    tokens = Tokenizer.expand_aliases(tokens)
     return command_list if tokens.empty?
 
     if tokens.first.type.string?
