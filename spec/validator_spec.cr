@@ -73,7 +73,7 @@ describe Validator do
 
     stdout_buffer.to_s.should eq(<<-OUTPUT)
     [Aliases] ✘
-    - Invalid alias: 'invalid' = '&& add -all && commit'
+    - Invalid alias: ':invalid' = '&& add -all && commit'
     [Config File] ✔
     [Config Sections] ✔
     [History File] ✔

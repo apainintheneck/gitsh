@@ -2,6 +2,12 @@ require "./spec_helper"
 require "../src/executor"
 
 describe Executor do
+  after_each do
+    Config.clear
+    File.delete?(Config::FILE_PATH)
+    Dir.delete?(Config::DIRECTORY)
+  end
+
   describe ".execute_line" do
     # SUCCESS
     context "with a single command" do

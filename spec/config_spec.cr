@@ -26,7 +26,7 @@ describe Config do
     size = 300
     INI
 
-    Config.aliases.should eq({"amend" => "commit --amend"})
+    Config.aliases.should eq({":amend" => "commit --amend"})
     Config.history_size.should eq(300)
   end
 

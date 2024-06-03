@@ -1,10 +1,16 @@
 require "./command"
+require "./config"
 require "string_scanner"
 
 module Tokenizer
   class SyntaxException < Exception; end
 
-  record Token, type : Token::Type, content : String, start_position : Int32, end_position : Int32 do
+  record Token,
+    type : Token::Type,
+    content : String,
+    from_alias : String?,
+    start_position : Int32,
+    end_position : Int32 do
     def_equals @type, @content # for testing
 
     enum Type
@@ -31,13 +37,19 @@ module Tokenizer
       end
     end
 
+    def alias? : Bool
+      from_alias.nil? && # nested aliases are not supported
+        type.string? &&
+        Config.aliases.has_key?(content)
+    end
+
     def location : String
       "#{start_position}:#{end_position}"
     end
   end
 
   # Turn a line of input into a series of action and string tokens.
-  def self.tokenize(line : String) : Array(Token)
+  def self.tokenize(line : String, alias_token : Token? = nil) : Array(Token)
     tokens = [] of Token
     scanner = StringScanner.new(line)
 
@@ -50,29 +62,33 @@ module Tokenizer
         tokens << Token.new(
           type: Token::Type::And,
           content: "&&",
-          start_position: start_position,
-          end_position: scanner.offset,
+          from_alias: alias_token.try &.content,
+          start_position: alias_token.try &.start_position || start_position,
+          end_position: alias_token.try &.end_position || scanner.offset
         )
       elsif scanner.scan(/[|]{2}/) # or (||)
         tokens << Token.new(
           type: Token::Type::Or,
           content: "||",
-          start_position: start_position,
-          end_position: scanner.offset,
+          from_alias: alias_token.try &.content,
+          start_position: alias_token.try &.start_position || start_position,
+          end_position: alias_token.try &.end_position || scanner.offset,
         )
       elsif scanner.scan(/;/) # end (;)
         tokens << Token.new(
           type: Token::Type::End,
           content: ";",
-          start_position: start_position,
-          end_position: scanner.offset,
+          from_alias: alias_token.try &.content,
+          start_position: alias_token.try &.start_position || start_position,
+          end_position: alias_token.try &.end_position || scanner.offset,
         )
       else # quoted or unquoted string
         tokens << Token.new(
           type: Token::Type::String,
           content: scan_string_token(scanner),
-          start_position: start_position,
-          end_position: scanner.offset,
+          from_alias: alias_token.try &.content,
+          start_position: alias_token.try &.start_position || start_position,
+          end_position: alias_token.try &.end_position || scanner.offset,
         )
       end
     end
@@ -121,6 +137,33 @@ module Tokenizer
           end
         end
       end
+    end
+  end
+
+  def self.expand_aliases(tokens : Array(Token)) : Array(Token)
+    return tokens if tokens.empty? || Config.aliases.empty?
+
+    expanded_tokens = [] of Token
+    prev_token_type = Token::Type::End
+
+    tokens.each do |token|
+      if !prev_token_type.string? && token.alias?
+        expanded_tokens.concat(expand_alias(token))
+      else
+        expanded_tokens << token
+      end
+      prev_token_type = token.type
+    end
+
+    expanded_tokens
+  end
+
+  @@expand_alias = {} of String => Array(Token)
+
+  private def self.expand_alias(token : Token) : Array(Token)
+    @@expand_alias[token.content] ||= begin
+      alias_content = Config.aliases[token.content]
+      tokenize(alias_content, token)
     end
   end
 end

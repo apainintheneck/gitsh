@@ -37,9 +37,9 @@ module Config
 
   def self.aliases : Hash(String, String)
     @@aliases ||= begin
-      config_hash.fetch("aliases") do
-        {} of String => String
-      end
+      config_hash
+        .fetch("aliases") { {} of String => String }
+        .transform_keys { |key| key.starts_with?(":") ? key : ":#{key}" }
     end
   end
 
