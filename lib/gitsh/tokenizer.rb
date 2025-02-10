@@ -45,6 +45,12 @@ module Gitsh
             start_position: start_position,
             end_position: scanner.charpos
           )
+        elsif scanner.skip("-- ") # end of command line options
+          tokens << Token::EndOfOptions.new(
+            source: line,
+            start_position: start_position,
+            end_position: scanner.charpos - 1
+          )
         else # quoted or unquoted string
           tokens << scan_string_token(
             line: line,

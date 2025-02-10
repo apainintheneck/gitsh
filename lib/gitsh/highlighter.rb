@@ -34,6 +34,8 @@ module Gitsh
         zipper.token.raw_content.color(:orange)
       elsif zipper.unterminated_string_token?
         zipper.token.start_char.color(:crimson) + zipper.token.content.color(:greenyellow)
+      elsif zipper.end_of_options_token?
+        zipper.token.raw_content.color(:mediumslateblue)
       elsif zipper.string_token?
         if zipper.command?
           if zipper.valid_command?
@@ -41,6 +43,11 @@ module Gitsh
           else
             zipper.token.raw_content.color(:crimson)
           end
+        elsif zipper.option? &&
+            zipper.options_allowed? &&
+            zipper.current_command.valid_command? &&
+            !zipper.valid_option?
+          zipper.token.raw_content.color(:orange)
         elsif zipper.token.quoted?
           zipper.token.raw_content.color(:yellowgreen)
         else

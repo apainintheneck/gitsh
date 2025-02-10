@@ -108,5 +108,9 @@ module Gitsh
 
     # When there is a single (&) or (|)
     class PartialAction < Base; end
+
+    # Indicates the end of command line option parsing.
+    # Ex. `--`
+    class EndOfOptions < String; end
   end
 end

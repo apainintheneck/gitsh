@@ -26,6 +26,14 @@ module Gitsh
       zipper = Gitsh::Tokenizer.tokenize(line)
       Gitsh::Highlighter.from_token_zipper(zipper)
     end
+
+    # @param line [String]
+    #
+    # @return [Array<String>] completions
+    def self.completions(line)
+      zipper = Gitsh::Tokenizer.tokenize(line)
+      Gitsh::Completer.completions(zipper)
+    end
   end
 end
 

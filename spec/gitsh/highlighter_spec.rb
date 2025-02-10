@@ -63,5 +63,56 @@ RSpec.describe Gitsh::Highlighter do
           .to end_with(Rainbow(string).color(:mediumslateblue).bold)
       end
     end
+
+    it "colors incomplete/invalid option orange", :aggregate_failures do
+      [
+        # Invalid options
+        "--cheesesteak",
+        "--cheeseburger",
+        # Incomplete options
+        "--no-mailm",
+        "--sour",
+        # Incomplete options missing value
+        "-L",
+        "--skip="
+      ].each do |option|
+        command_with_option = "log #{option}"
+        expect(Gitsh::Test.highlight(command_with_option))
+          .to end_with(Rainbow(option).color(:orange).bold)
+      end
+    end
+
+    it "colors incomplete/invalid option purple after '--'", :aggregate_failures do
+      [
+        # Invalid options
+        "--cheesesteak",
+        "--cheeseburger",
+        # Incomplete options
+        "--no-mailm",
+        "--sour",
+        # Incomplete options missing value
+        "-L",
+        "--skip="
+      ].each do |option|
+        command_with_option = "log -- #{option}"
+        expect(Gitsh::Test.highlight(command_with_option))
+          .to end_with(Rainbow(option).color(:mediumslateblue).bold)
+      end
+    end
+
+    it "colors complete/valid option purple", :aggregate_failures do
+      [
+        # Complete options
+        "--no-decorate",
+        "--source",
+        # Complete options with values
+        "--decorate=short",
+        "--skip=5"
+      ].each do |option|
+        command_with_option = "log #{option}"
+        expect(Gitsh::Test.highlight(command_with_option))
+          .to end_with(Rainbow(option).color(:mediumslateblue).bold)
+      end
+    end
   end
 end

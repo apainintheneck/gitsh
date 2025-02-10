@@ -25,11 +25,19 @@ RSpec.describe Gitsh::Git do
     end
   end
 
-  describe ".commands" do
-    it "returns a list of Git commands" do
-      expect(described_class.commands).to include(
-        "commit", "push", "pull", "status", "diff", "grep", "log"
-      )
+  describe ".command_list" do
+    it "returns an array of Git commands" do
+      expect(described_class.command_list)
+        .to be_an(Array)
+        .and include("commit", "push", "pull", "status", "diff", "grep", "log")
+    end
+  end
+
+  describe ".command_set" do
+    it "returns a set of Git command" do
+      expect(described_class.command_set)
+        .to be_a(Set)
+        .and include("commit", "push", "pull", "status", "diff", "grep", "log")
     end
   end
 

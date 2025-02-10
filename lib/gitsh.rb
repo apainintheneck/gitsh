@@ -17,6 +17,7 @@ module Gitsh
   class ExitError < Error; end
 
   autoload :Command, "gitsh/command"
+  autoload :Completer, "gitsh/completer"
   autoload :Executor, "gitsh/executor"
   autoload :Git, "gitsh/git"
   autoload :Highlighter, "gitsh/highlighter"
@@ -87,7 +88,7 @@ module Gitsh
 
   # @return [Array<String>]
   def self.all_commands
-    @all_commands ||= (Git.commands + %w[exit quit]).freeze
+    @all_commands ||= (Git.command_list + %w[exit quit]).freeze
   end
 
   # @param word [String]
@@ -96,20 +97,14 @@ module Gitsh
   def self.completions(word)
     return if word.empty?
 
-    last_token_zipper = line_token_zipper.last
-    return unless last_token_zipper.command?
-    return if last_token_zipper.valid_command?
-
-    all_commands
-      # Complete all commands starting with the given prefix.
-      .grep(/^#{Regexp.escape(word)}./)
-      # Sort results by shortest command and then alphabetically.
-      .sort_by { |cmd| [cmd.size, cmd] }
+    Completer.completions(line_token_zipper)
   end
   private_class_method :completions
 
+  # @param line [String]
+  #
   # @return [String]
-  def self.highlight(line, complete:)
+  def self.highlight(line, **)
     return if line.strip.empty?
 
     Highlighter.from_token_zipper(line_token_zipper)
